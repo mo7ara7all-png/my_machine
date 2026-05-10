@@ -84,7 +84,7 @@ df.drop(columns=['url'], inplace=True)
 # plt.show()
 
 
-#top_corr = corr['shares'].abs().sort_values(ascending=False).head(15)
+# top_corr = corr['shares'].abs().sort_values(ascending=False).head(15)
 
 # print(top_corr)
 #--------------------------------- show the data (before log transform) ---------------------------------#
@@ -95,25 +95,32 @@ df.drop(columns=['url'], inplace=True)
 # plt.title("Before Log Transform")
 #--------------------------------- show the data (after log transform) -----------------------------------#
 
-log_shares = np.log1p(df['shares'])
-plt.subplot(1,2,2)
-plt.hist(log_shares, bins=50)
-plt.title("After Log Transform")
+# log_shares = np.log1p(df['shares'])
+# plt.subplot(1,2,2)
+# plt.hist(log_shares, bins=50)
+# plt.title("After Log Transform")
 
-# plt.show()
-#----------------------------------- Train Data * Test Data ------------------------------------------------#
-X = df.drop('shares', axis=1)
+# # plt.show()
+# #----------------------------------- Train Data * Test Data ------------------------------------------------#
+# X = df.drop('shares', axis=1)
 
-y = df['shares']
-X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=42)
+# y = df['shares']
+# X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=42)
 
-scaler = RobustScaler()
-X_train = scaler.fit_transform(X_train)
+# scaler = RobustScaler()
+# X_train = scaler.fit_transform(X_train)
 
-print("X_train shape:", X_train.shape)
-print("X_test shape:", X_test.shape)
+# print("X_train shape:", X_train.shape)
+# print("X_test shape:", X_test.shape)
 
-print("y_train shape:", y_train.shape)
-print("y_test shape:", y_test.shape)
+# print("y_train shape:", y_train.shape)
+# print("y_test shape:", y_test.shape)
+
+
+
+
+
+
+
 
 
