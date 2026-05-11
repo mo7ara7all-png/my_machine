@@ -5,6 +5,11 @@ from sklearn.model_selection import StratifiedShuffleSplit
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import RobustScaler
+from sklearn.metrics import (
+    mean_absolute_error,
+    mean_squared_error,
+    r2_score
+)
 
 
 
@@ -20,95 +25,105 @@ df.drop(columns=['url'], inplace=True)
 #                           describe the data , null or not-null :
 #               #-----------------------------------------------------#
 
-# print(df.info())
+print(df.info())
 
-# describe the data , min,max,mean....etc :
-# print(df.describe())
-#               
-# ------------------------------------------"Preproccesing"----------------------------------------------#
-# 
-# 
+#describe the data , min,max,mean....etc :
+print(df.describe())
+              
+#------------------------------------------"Preproccesing"----------------------------------------------#
+
+
 
 #---------------------------------- check if there is a null values :-----------------------------------#
-# print(df.isnull().sum())
-# -------------------------------- check if there is a duplicated ROWS:----------------------------------#
-# print(df.duplicated().sum())
-# -------------------------------- show the duplicate Rows (if exist) :----------------------------------#
-# duplicates = df[df.duplicated()]
-# print(duplicates)
-# ------------------------------- delete the dulicate Rows (if exist) :----------------------------------#
-# df = df.drop_duplicates()
+print(df.isnull().sum())
+#-------------------------------- check if there is a duplicated ROWS:----------------------------------#
+print(df.duplicated().sum())
+#-------------------------------- show the duplicate Rows (if exist) :----------------------------------#
+duplicates = df[df.duplicated()]
+print(duplicates)
+#------------------------------- delete the dulicate Rows (if exist) :----------------------------------#
+df = df.drop_duplicates()
 
-#-----------------------   We dont need encoding - because all data are numircal------------------------#
-
-
+#-----------------------   We dont need encoding - because all data are numircal ------------------------#
 
 
-# print(df['shares'].describe())
+
+
+print(df['shares'].describe())
 #----------------------------------- show the data 'shares' :---------------------------------------------#
 
-# plt.hist(df['shares'])
-# plt.show
-# print(df['shares'].head())
-# df['shares'] = np.log1p(df['shares'])
-# plt.figure(figsize=(10,5))
+plt.hist(df['shares'])
+plt.show
+print(df['shares'].head())
+df['shares'] = np.log1p(df['shares'])
+plt.figure(figsize=(10,5))
 
-# plt.hist(df['shares'], bins=50)
+plt.hist(df['shares'], bins=50)
 
-# plt.title("Shares Distribution")
-# plt.xlabel("Shares")
-# plt.ylabel("Count")
+plt.title("Shares Distribution")
+plt.xlabel("Shares")
+plt.ylabel("Count")
 
-# plt.show()
+plt.show()
 
 
 #-------------------------- show the relation between the feautures with 'shares' :-------------------------#
-# corr = df.corr(numeric_only=True)
+corr = df.corr(numeric_only=True)
 
-# shares_corr = corr['shares'].sort_values(ascending=False)
+shares_corr = corr['shares'].sort_values(ascending=False)
 
-# print(shares_corr)
+print(shares_corr)
 
 
                 
 #------------------------- show the relation between the feautures with 'shares' with bar plot :----------#
 
-# shares_corr = corr['shares'].sort_values()
+shares_corr = corr['shares'].sort_values()
 
-# plt.figure(figsize=(10,15))
+plt.figure(figsize=(10,15))
 
-# shares_corr.plot(kind='barh')
+shares_corr.plot(kind='barh')
 
-# plt.title("Correlation with Shares")
+plt.title("Correlation with Shares")
 
-# plt.show()
+plt.show()
 
 
-# top_corr = corr['shares'].abs().sort_values(ascending=False).head(15)
+top_corr = corr['shares'].abs().sort_values(ascending=False).head(15)
 
-# print(top_corr)
+print(top_corr)
 #--------------------------------- show the data (before log transform) ---------------------------------#
-# plt.figure(figsize=(12,5))
+plt.figure(figsize=(12,5))
 
-# plt.subplot(1,2,1)
-# plt.hist(df['shares'], bins=50)
-# plt.title("Before Log Transform")
+plt.subplot(1,2,1)
+plt.hist(df['shares'], bins=50)
+plt.title("Before Log Transform")
 #--------------------------------- show the data (after log transform) -----------------------------------#
 
-# log_shares = np.log1p(df['shares'])
-# plt.subplot(1,2,2)
-# plt.hist(log_shares, bins=50)
-# plt.title("After Log Transform")
+log_shares = np.log1p(df['shares'])
+plt.subplot(1,2,2)
+plt.hist(log_shares, bins=50)
+plt.title("After Log Transform")
 
-# # plt.show()
-# #----------------------------------- Train Data * Test Data ------------------------------------------------#
-# X = df.drop('shares', axis=1)
+# plt.show()
+#----------------------------------- Train Data * Test Data ------------------------------------------------#
+X = df.drop('shares', axis=1)
 
-# y = df['shares']
-# X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=42)
+y = df['shares']
 
-# scaler = RobustScaler()
-# X_train = scaler.fit_transform(X_train)
+#split the data:
+
+X_train, X_test, y_train, y_test = train_test_split( X, 
+        y,
+        test_size=0.2,
+        random_state=42
+        )
+
+#scaling
+
+scaler = RobustScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
 
 # print("X_train shape:", X_train.shape)
 # print("X_test shape:", X_test.shape)
@@ -116,7 +131,7 @@ df.drop(columns=['url'], inplace=True)
 # print("y_train shape:", y_train.shape)
 # print("y_test shape:", y_test.shape)
 
-#printttjtjtt
+
 
 
 
