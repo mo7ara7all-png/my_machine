@@ -130,7 +130,6 @@ topic_cols=[col for col in df.columns if 'data_channel_is' in col]
 
 # %% Calculates average shares for each topic
 topic_avg = {}
-print(topic_avg)
 
 for col in topic_cols:
     topic_avg[col] = df[df[col] == 1]['shares'].mean()
@@ -149,7 +148,6 @@ plt.close()
 
 #%% Calculates average shares for each publishing day
 day_avg = {}
-print(day_avg)
 
 day_cols = [col for col in df.columns if 'weekday_is' in col] # Finds all weekday columns
 
@@ -236,4 +234,30 @@ plt.close()
 
 
 
-# %%
+# %%# Check if there are any missing values
+total_missing = df_clean.isnull().sum().sum()
+print("Total missing values:", total_missing)
+
+
+
+
+#%%# %% Count duplicate rows
+duplicates_count = df_clean.duplicated().sum()
+
+print("Duplicate rows:", duplicates_count)
+
+
+
+# %%# Remove duplicates if found
+if duplicates_count > 0:
+    df_clean = df_clean.drop_duplicates()
+    print("Duplicates removed.")
+else:
+    print("No duplicate rows found.")
+
+
+
+
+# %% Verify shape after cleaning
+print("Original shape:", df.shape)
+print("Cleaned shape:", df_clean.shape)
