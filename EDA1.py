@@ -176,32 +176,9 @@ plt.close()
 
 
 
-# %% Calculates Q1, Q3, and IQR for shares
-Q1 = df['shares'].quantile(0.25)
-Q3 = df['shares'].quantile(0.75)
-IQR = Q3 - Q1
-
-# Defines lower and upper bounds for outliers
-lower_bound = Q1 - 1.5 * IQR
-upper_bound = Q3 + 1.5 * IQR
-
-# Finds rows that contain outlier values in shares
-outliers = df[(df['shares'] < lower_bound) | (df['shares'] > upper_bound)]
-print("Outliers shape:", outliers.shape)
-
-
-
-#%% Calculates correlation of all numeric features with shares
-shares_corr = corr_matrix['shares'].sort_values(ascending=False)
-
-print(shares_corr.head(10))
-print(shares_corr.tail(10))
-
-
-
 # %% Make a copy of the original dataset before cleaning
 df_clean = df.copy()
-print(df_clean)
+print(df_clean.head())
 
 
 
@@ -261,3 +238,63 @@ else:
 # %% Verify shape after cleaning
 print("Original shape:", df.shape)
 print("Cleaned shape:", df_clean.shape)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#%%------------Encoding------------------
+
+
+#%% Creates a separate copy of the cleaned dataset for encoding
+df_encoded = df_clean.copy()
+
+
+
+
+
+#%% Detect categorical variables
+categorical_cols = df_encoded.select_dtypes(include=['object']).columns
+
+print("Categorical columns:", categorical_cols)
+print("Number of categorical columns:", len(categorical_cols))
+
+
+
+
+
+#%% Check unique values in categorical columns
+for col in categorical_cols:
+    print(col, ":", df_encoded[col].nunique(), "unique values")
+
+
+
+
+#%%Apply encoding if categorical columns exist
+if len(categorical_cols) > 0:
+    df_encoded = pd.get_dummies(df_encoded, columns=categorical_cols, drop_first=True)
+    print("Encoding applied using One-Hot Encoding.")
+else:
+    print("No categorical variables found. Encoding is not needed.")
+
+
+#%% Compare before and after encoding
+print("Shape before encoding:", df_clean.shape)
+print("Shape after encoding:", df_encoded.shape)
+
+
+
+#%% Check data types after encoding
+print(df_encoded.dtypes)
+
+#%%
