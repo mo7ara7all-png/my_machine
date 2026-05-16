@@ -5,6 +5,12 @@ import matplotlib
 matplotlib.use("module://matplotlib_inline.backend_inline")
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
 
 
 
@@ -251,8 +257,6 @@ print("Cleaned shape:", df_clean.shape)
 
 
 
-
-
 #%%------------Encoding------------------
 
 
@@ -264,7 +268,7 @@ df_encoded = df_clean.copy()
 
 
 #%% Detect categorical variables
-categorical_cols = df_encoded.select_dtypes(include=['object']).columns
+categorical_cols = df_encoded.select_dtypes(include=['object']).columns.drop('url')
 
 print("Categorical columns:", categorical_cols)
 print("Number of categorical columns:", len(categorical_cols))
@@ -280,7 +284,7 @@ for col in categorical_cols:
 
 
 
-#%%Apply encoding if categorical columns exist
+#%% Apply encoding if categorical columns exist
 if len(categorical_cols) > 0:
     df_encoded = pd.get_dummies(df_encoded, columns=categorical_cols, drop_first=True)
     print("Encoding applied using One-Hot Encoding.")
@@ -297,4 +301,265 @@ print("Shape after encoding:", df_encoded.shape)
 #%% Check data types after encoding
 print(df_encoded.dtypes)
 
-#%%
+
+
+
+#%%--------------Feature Engineering------------------
+
+#%% Creates a separate copy of the encoded dataset for feature engineering
+df_fe =df_encoded.copy()
+
+
+
+# %% Create weekend indicator feature
+df_fe["is_weekend"]=(
+    df_fe["weekday_is_saturday"] +
+    df_fe["weekday_is_sunday"]
+)
+
+
+
+#%% Create article complexity score
+df_fe["article_complexity"]=(
+    df_fe["n_tokens_content"] /  (df_fe["num_hrefs"] +1)
+)
+
+
+
+# %%  Create image density feature
+df_fe["image_density"]=(
+    df_fe["num_imgs"] / (df_fe["n_tokens_content"] +1)
+)
+
+
+#%% Create video density feature
+df_fe["video_density"]=(
+    df_fe["num_videos"] / (df_fe["n_tokens_content"]+1)
+)
+
+
+# %% Create keyword density feature
+df_fe["keyword_density"]=(
+    df_fe["kw_avg_avg"] / (df_fe["n_tokens_content"] +1)  
+)
+
+
+# %% Create interaction feature between global sentiment and title sentiment
+df_fe["sentiment_title_interaction"]=(
+    df_fe["global_sentiment_polarity"] *
+    df_fe["title_sentiment_polarity"]
+)
+
+
+
+# %% Create interaction feature between content length and number of images
+df_fe["content_image_interaction"]=(
+    df_fe["n_tokens_content"] *
+    df_fe["num_imgs"]
+)
+
+# %% Create log transformation feature for shares
+df_fe['log_shares'] = np.log1p(df_fe['shares'])
+
+
+#%% Display the new engineered features
+print(df_fe[['is_weekend',
+             'article_complexity',
+             'image_density',
+             'video_density',
+             'keyword_density',
+             'sentiment_title_interaction',
+             'content_image_interaction',
+             'log_shares']].head())
+
+
+# %% Compare dataset shape before and after feature engineering
+print("Shape before feature engineering:", df_encoded.shape)
+print("Shape after feature engineering:", df_fe.shape)
+
+
+
+
+
+
+
+
+
+
+#%%--------------Feature Selection------------------
+# --------------Correlation-based filtering -------------------
+
+
+#%% Creates a copy of the feature engineered dataset for feature selection
+df_fs = df_fe.copy()
+
+
+
+# %% Calculate correlation of all numeric features with shares
+shares_corr =df_fs.corr(numeric_only=True)['shares'].sort_values(ascending=False)
+
+
+
+# %% Display top positively correlated features
+print("Top positive correlations with shares")
+print(shares_corr.head(10))
+
+
+
+# %% Display top negatively correlated features
+print("Top negative correlations with shares:")
+print(shares_corr.tail(10))
+
+
+
+# %% Visualize correlation of features with shares
+plt.figure(figsize=(10,8))
+
+shares_corr.drop('shares').sort_values().plot(kind='barh')
+
+plt.title("Feature Correlation with Shares")
+plt.xlabel("Correlation")
+plt.ylabel("Features")
+
+plt.show()
+plt.close()
+
+
+
+
+
+
+#%%--------------Recursive Feature Elimination (RFE)------------------
+# Prepare features and target for RFE
+X = df_fs.drop(columns=['shares', 'log_shares', 'url'], errors='ignore')
+y = df_fs['shares']
+
+
+
+#%% Create a Linear Regression model for RFE
+rfe_model = LinearRegression()
+
+
+
+#%% Apply RFE to select the top 10 features
+rfe = RFE(estimator=rfe_model, n_features_to_select=10)
+
+rfe.fit(X, y)
+
+
+
+#%% Store selected features from RFE
+rfe_selected_features = X.columns[rfe.support_]
+
+
+
+#%% Display selected features
+print("Selected features using RFE:")
+print(rfe_selected_features)
+
+
+
+
+
+#%%--------------Tree-based Importance Selection------------------
+
+
+
+#%% Prepare features and target for tree-based importance
+X_tree = df_fs.drop(columns=['shares', 'log_shares', 'url'], errors='ignore')
+y_tree = df_fs['shares']
+
+
+
+#%% Create Random Forest model for feature importance
+tree_model = RandomForestRegressor(
+    n_estimators=100,
+    random_state=42,
+    n_jobs=-1
+)
+
+#%% Fit the Random Forest model
+tree_model.fit(X_tree, y_tree)
+
+
+#%% Extract feature importance values
+feature_importance = pd.Series(
+    tree_model.feature_importances_,
+    index=X_tree.columns
+).sort_values(ascending=False)
+
+
+
+
+#%% Display top 10 important features
+print("Top 10 important features using Random Forest:")
+print(feature_importance.head(10))
+
+
+
+#%% Visualize top 10 important features
+plt.figure(figsize=(10,6))
+
+feature_importance.head(10).sort_values().plot(kind='barh')
+
+plt.title("Top 10 Feature Importances - Random Forest")
+plt.xlabel("Importance Score")
+plt.ylabel("Features")
+
+plt.show()
+plt.close()
+
+
+
+
+
+#%%--------------PCA / Dimensionality Reduction------------------
+
+
+#%%Prepare features for PCA
+X_pca = df_fs.drop(columns=['shares', 'log_shares', 'url'], errors='ignore')
+
+
+#%% Standardize the features before PCA
+scaler = StandardScaler()
+
+X_scaled = scaler.fit_transform(X_pca)
+
+
+#%% Apply PCA
+pca = PCA()
+
+X_pca_transformed = pca.fit_transform(X_scaled)
+
+
+#%% Calculate explained variance ratio
+explained_variance = pca.explained_variance_ratio_
+
+
+# %% Display explained variance ratio
+print("Explained Variance Ratio:")
+print(explained_variance)
+
+
+# %% Calculate cumulative explained variance
+cumulative_variance = np.cumsum(explained_variance)
+
+
+
+# %% Visualize cumulative explained variance
+plt.figure(figsize=(10,6))
+
+plt.plot(range(1, len(cumulative_variance)+1),
+         cumulative_variance,
+         marker='o')
+
+plt.title("Cumulative Explained Variance by PCA Components")
+plt.xlabel("Number of Components")
+plt.ylabel("Cumulative Explained Variance")
+
+plt.grid(True)
+
+plt.show()
+plt.close()
+
+
