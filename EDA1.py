@@ -553,9 +553,9 @@ plt.plot(range(1, len(cumulative_variance)+1),
          cumulative_variance,
          marker='o')
 
-plt.title("Cumulative Explained Variance by PCA Components")
-plt.xlabel("Number of Components")
-plt.ylabel("Cumulative Explained Variance")
+plt.title("Dimensionality Reduction using PCA")
+plt.xlabel("PCA Components")
+plt.ylabel("Explained Variance Ratio")
 
 plt.grid(True)
 
