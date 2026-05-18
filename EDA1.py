@@ -15,6 +15,8 @@ from sklearn.preprocessing import StandardScaler
 
 
 
+
+
 # %% Load dataset
 df = pd.read_csv("OnlineNewsPopularity/OnlineNewsPopularity.csv")
 df.columns = df.columns.str.strip()
@@ -224,7 +226,7 @@ print("Total missing values:", total_missing)
 
 
 
-#%%# %% Count duplicate rows
+#%% Count duplicate rows
 duplicates_count = df_clean.duplicated().sum()
 
 print("Duplicate rows:", duplicates_count)
@@ -357,6 +359,8 @@ df_fe["content_image_interaction"]=(
     df_fe["n_tokens_content"] *
     df_fe["num_imgs"]
 )
+
+
 
 # %% Create log transformation feature for shares
 df_fe['log_shares'] = np.log1p(df_fe['shares'])
@@ -563,3 +567,5 @@ plt.show()
 plt.close()
 
 
+
+# %%
