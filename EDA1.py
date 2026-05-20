@@ -5,6 +5,14 @@ import matplotlib
 matplotlib.use("module://matplotlib_inline.backend_inline")
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+
+
 
 
 
@@ -176,32 +184,9 @@ plt.close()
 
 
 
-# %% Calculates Q1, Q3, and IQR for shares
-Q1 = df['shares'].quantile(0.25)
-Q3 = df['shares'].quantile(0.75)
-IQR = Q3 - Q1
-
-# Defines lower and upper bounds for outliers
-lower_bound = Q1 - 1.5 * IQR
-upper_bound = Q3 + 1.5 * IQR
-
-# Finds rows that contain outlier values in shares
-outliers = df[(df['shares'] < lower_bound) | (df['shares'] > upper_bound)]
-print("Outliers shape:", outliers.shape)
-
-
-
-#%% Calculates correlation of all numeric features with shares
-shares_corr = corr_matrix['shares'].sort_values(ascending=False)
-
-print(shares_corr.head(10))
-print(shares_corr.tail(10))
-
-
-
 # %% Make a copy of the original dataset before cleaning
 df_clean = df.copy()
-print(df_clean)
+print(df_clean.head())
 
 
 
@@ -241,7 +226,7 @@ print("Total missing values:", total_missing)
 
 
 
-#%%# %% Count duplicate rows
+#%% Count duplicate rows
 duplicates_count = df_clean.duplicated().sum()
 
 print("Duplicate rows:", duplicates_count)
@@ -261,3 +246,16 @@ else:
 # %% Verify shape after cleaning
 print("Original shape:", df.shape)
 print("Cleaned shape:", df_clean.shape)
+
+
+
+
+
+
+
+
+
+
+
+
+
