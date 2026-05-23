@@ -282,7 +282,7 @@ plt.show()
 plt.close()
 
 
-# %% Strategy 1: Remove outliers
+# %%  Remove outliers
 
 df_removed = df_clean[
     (df_clean[target_col] >= lower_bound) &
@@ -293,7 +293,7 @@ print("Original shape:", df_clean.shape)
 print("After removing outliers:", df_removed.shape)
 
 
-# %% Strategy 2: Winsorization
+# %%  Winsorization
 
 df_winsorized = df_clean.copy()
 
