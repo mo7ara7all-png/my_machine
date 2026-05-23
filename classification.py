@@ -29,39 +29,28 @@ from sklearn.metrics import (
     classification_report
 )
 
-
 # Read The Data :
-df = pd.read_csv("OnlineNewsPopularity.csv")
-
+df = pd.read_csv("Data//OnlineNewsPopularity.csv")
 
 # Clean Column Names :
 # ----------------------------------------------------------------------------------------- 
-
 df.columns = df.columns.str.strip()
-
-
 
 # Drop The URL column (It is not That Important) :
 #----------------------------------------------------------------------------------------- 
-
-df.drop(columns=['cd url'], inplace=True)
-
+df.drop(columns=['url'], inplace=True)
 
 
 # Create Classification Target :
 # ----------------------------------------------------------------------------------------- 
-
 median_shares = df['shares'].median()
 df['popular'] = (df['shares'] > median_shares).astype(int)
 
 X = df.drop(columns=['shares', 'popular'])
 y = df['popular']
 
-
-
 # Train and Test Split :
 # ----------------------------------------------------------------------------------------- 
-
 X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -69,25 +58,17 @@ X_train, X_test, y_train, y_test = train_test_split(
     random_state=42
 )
 
-
-
-
 # Feature Scaling :
 # ----------------------------------------------------------------------------------------- 
-
 scaler = RobustScaler()
-
 X_train = scaler.fit_transform(X_train)
-
 X_test = scaler.transform(X_test)
 
 
-
-
 # Solve The First solution required :
+
 # Logistic Regression
 # ----------------------------------------------------------------------------------------- 
-
 print("=" * 50)
 print("LOGISTIC REGRESSION")
 print("=" * 50)
@@ -112,7 +93,6 @@ print("F1 Score:",
       f1_score(y_test, lr_pred))
 
 
-
 # Classification Report For Logistic Regression 
 print("\nClassification Report:\n")
 
@@ -120,8 +100,6 @@ print(classification_report(
     y_test,
     lr_pred
 ))
-
-
 
 # Confusion Matrix For Logistic Regression
 cm = confusion_matrix(y_test, lr_pred)
@@ -133,15 +111,10 @@ sns.heatmap(
     annot=True,
     fmt='d'
 )
-
 plt.title("Logistic Regression Confusion Matrix")
-
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
-
 plt.show()
-
-
 
 
 # (ROC + AUC) For logistic Regression
@@ -174,10 +147,7 @@ plt.show()
 print("Logistic Regression AUC:", auc_score)
 
 
-
-
 # Feature Importance For Logistic Regression
-
 lr_importance = np.abs(lr_model.coef_[0])
 
 lr_importance_df = pd.DataFrame({
@@ -195,11 +165,7 @@ plt.tight_layout()
 plt.show()
 
 
-
-
-
 # CALIBRATION CURVE + BRIER SCORE FOR LOGISTIC REGRESSION
-
 lr_prob = lr_model.predict_proba(X_test)[:,1]
 
 prob_true, prob_pred = calibration_curve(
@@ -227,12 +193,9 @@ brier = brier_score_loss(y_test, lr_prob)
 print("Logistic Regression Brier Score:", brier)
 
 
-
-
 print("=" * 50)
 print("KNN Classifier")
 print("=" * 50)
-
 
 # KNN Classifier :
 # ----------------------------------------------------------------------------------------- 
@@ -255,7 +218,6 @@ print("F1 Score:",
       f1_score(y_test, knn_pred))
 
 
-
 # Classification Report For KNN
 print("\nClassification Report:\n")
 
@@ -263,8 +225,6 @@ print(classification_report(
     y_test,
     knn_pred
 ))
-
-
 
 # Confusion Matrix For KNN
 cm = confusion_matrix(y_test, knn_pred)
@@ -283,8 +243,6 @@ plt.xlabel("Predicted")
 plt.ylabel("Actual")
 
 plt.show()
-
-
 
 # (ROC + AUC) For KNN
 knn_prob = knn_model.predict_proba(X_test)[:,1]
@@ -316,8 +274,6 @@ plt.show()
 print("KNN AUC:", auc_score)
 
 
-
-
 # CALIBRATION CURVE + BRIER SCORE FOR KNN
 
 knn_prob = knn_model.predict_proba(X_test)[:,1]
@@ -347,13 +303,9 @@ brier = brier_score_loss(y_test, knn_prob)
 print("KNN Brier Score:", brier)
 
 
-
-
-
 print("=" * 50)
 print("Support Vector Machine (linear + kernel)")
 print("=" * 50)
-
 
 
 # Support Vector Machine (linear + kernel) :
@@ -382,7 +334,6 @@ print("F1 Score:",
       f1_score(y_test, svm_pred))
 
 
-
 # Classification Report For SVM(Linear)
 print("\nClassification Report:\n")
 
@@ -390,8 +341,6 @@ print(classification_report(
     y_test,
     svm_pred
 ))
-
-
 
 # Confusion Matrix For SVM(Linear)
 cm = confusion_matrix(y_test, svm_pred)
@@ -410,9 +359,6 @@ plt.xlabel("Predicted")
 plt.ylabel("Actual")
 
 plt.show()
-
-
-
 
 
 # (ROC + AUC) For Linear SVM
@@ -444,9 +390,6 @@ plt.show()
 
 print("Linear SVM AUC:", auc_score)
 
-
-
-
 #2)
 # Kernel SVM.
 
@@ -472,7 +415,6 @@ print("F1 Score:",
       f1_score(y_test, svm_rbf_pred))
 
 
-
 # Classification Report For SVM(Kernel)
 print("\nClassification Report:\n")
 
@@ -481,7 +423,6 @@ print(classification_report(
     svm_rbf_pred
     
     ))
-
 
 
 # Confusion Matrix For SVM(kernel)
@@ -501,8 +442,6 @@ plt.xlabel("Predicted")
 plt.ylabel("Actual")
 
 plt.show()
-
-
 
 
 # (ROC + AUC) For Kernel SVM
@@ -535,7 +474,6 @@ plt.show()
 print("Kernel SVM AUC:", auc_score)
 
 
-
 # CALIBRATION CURVE + BRIER SCORE FOR KERNEL SVM
 
 svm_rbf_prob = svm_rbf.predict_proba(X_test)[:,1]
@@ -565,12 +503,9 @@ brier = brier_score_loss(y_test, svm_rbf_prob)
 print("Kernel SVM Brier Score:", brier)
 
 
-
 print("=" * 50)
 print("Decision Tree")
 print("=" * 50)
-
-
 
 # Decision Tree :
 # ----------------------------------------------------------------------------------------- 
@@ -595,7 +530,6 @@ print("F1 Score:",
       f1_score(y_test, tree_pred))
 
 
-
 # Classification Report For SVM(Kernal)
 print("\nClassification Report:\n")
 
@@ -603,8 +537,6 @@ print(classification_report(
     y_test,
     tree_pred
 ))
-
-
 
 # Confusion Matrix For Disicion Tree
 cm = confusion_matrix(y_test, tree_pred)
@@ -623,8 +555,6 @@ plt.xlabel("Predicted")
 plt.ylabel("Actual")
 
 plt.show()
-
-
 
 
 # (ROC + AUC) For Desicion Tree
@@ -657,7 +587,6 @@ plt.show()
 print("Decision Tree AUC:", auc_score)
 
 
-
 # Feature Importance For Decision Tree
 print("=" * 50)
 print("Feature Importance - Decision Tree")
@@ -680,9 +609,7 @@ plt.tight_layout()
 plt.show()
 
 
-
 # CALIBRATION CURVE + BRIER SCORE FOR DECISION TREE
-
 tree_prob = tree_model.predict_proba(X_test)[:,1]
 
 prob_true, prob_pred = calibration_curve(
@@ -710,14 +637,9 @@ brier = brier_score_loss(y_test, tree_prob)
 print("Decision Tree Brier Score:", brier)
 
 
-
-
 print("=" * 50)
 print("Random Forest")
 print("=" * 50)
-
-
-
 
 # Random Forest :
 # ----------------------------------------------------------------------------------------- 
@@ -752,8 +674,6 @@ print(classification_report(
     rf_pred
 ))
 
-
-
 # Confusion Matrix For Random Forest
 cm = confusion_matrix(y_test, rf_pred)
 
@@ -771,8 +691,6 @@ plt.xlabel("Predicted")
 plt.ylabel("Actual")
 
 plt.show()
-
-
 
 
 # (ROC + AUC) For Random Forest
@@ -805,7 +723,6 @@ plt.show()
 print("Random Forest AUC:", auc_score)
 
 
-
 # Feature Importance For Random Forest
 print("=" * 50)
 print("Feature Importance - Random Forest")
@@ -826,8 +743,6 @@ sns.barplot(x='Importance', y='Feature', data=rf_importance_df.head(10))
 plt.title("Top 10 Important Features - Random Forest")
 plt.tight_layout()
 plt.show()
-
-
 
 
 # CALIBRATION CURVE + BRIER SCORE FOR RANDOM FOREST
@@ -859,12 +774,9 @@ brier = brier_score_loss(y_test, rf_prob)
 print("Random Forest Brier Score:", brier)
 
 
-
-
 print("=" * 50)
 print("XGBOOST CLASSIFIER")
 print("=" * 50)
-
 
 # XGBoost Classifier :
 # -----------------------------------------------------------------------------------------
@@ -893,7 +805,6 @@ print("F1 Score:",
       f1_score(y_test, xgb_pred))
 
 
-
 # Classification Report For XGBoost
 print("\nClassification Report:\n")
 
@@ -901,8 +812,6 @@ print(classification_report(
     y_test,
     xgb_pred
 ))
-
-
 
 # Confusion Matrix For XGBoost
 cm = confusion_matrix(y_test, xgb_pred)
@@ -921,7 +830,6 @@ plt.xlabel("Predicted")
 plt.ylabel("Actual")
 
 plt.show()
-
 
 
 # (ROC + AUC) For XGBoost
@@ -952,7 +860,6 @@ plt.title(f"XGBoost ROC Curve (AUC = {auc_score:.2f})")
 plt.show()
 
 print("XGBoost AUC:", auc_score)
-
 
 
 # Feature Importance For XGBoost
@@ -1007,13 +914,9 @@ brier = brier_score_loss(y_test, xgb_prob)
 print("XGBoost Brier Score:", brier)
 
 
-
-
-
 print("=" * 50)
 print("LIGHTGBM CLASSIFIER")
 print("=" * 50)
-
 
 # LightGBM Classifier :
 # -----------------------------------------------------------------------------------------
@@ -1049,8 +952,6 @@ print(classification_report(
     lgb_pred
 ))
 
-
-
 # Confusion Matrix For LightGBM
 cm = confusion_matrix(y_test, lgb_pred)
 
@@ -1068,7 +969,6 @@ plt.xlabel("Predicted")
 plt.ylabel("Actual")
 
 plt.show()
-
 
 
 # (ROC + AUC) For LightGBM
@@ -1101,7 +1001,6 @@ plt.show()
 print("LightGBM AUC:", auc_score)
 
 
-
 # Feature Importance For LightGBM
 print("=" * 50)
 print("Feature Importance - LightGBM")
@@ -1125,9 +1024,7 @@ plt.show()
 
 
 
-
 # CALIBRATION CURVE + BRIER SCORE FOR LIGHTGBM
-
 lgb_prob = lgb_model.predict_proba(X_test)[:,1]
 
 prob_true, prob_pred = calibration_curve(
@@ -1167,46 +1064,8 @@ print("LightGBM Brier Score:", brier)
 
 # Calibration Curve :
 # Is The Model Honest , Can We Trust it? 
-#----------------------------------------------------------------------------------------- 
-
-
-# Splitting The probabilities Into 10 Bins:
-# prob_true, prob_pred = calibration_curve(
-#     y_test,
-#     y_prob,
-#     n_bins=10
-# )
-# plt.figure(figsize=(6,6))
-
-# plt.plot(prob_pred, prob_true)
-
-# plt.plot([0,1], [0,1], linestyle='--')
-
-# plt.xlabel("Predicted Probability")
-
-# plt.ylabel("True Probability")
-
-# plt.title("Calibration Curve")
-# plt.show()
-# # If it Far Oway Of The Line , We Say The Model Overconfident or Underconfident.
-
-
-
-
-# # Brier Score :
-# # Rate The Accuracy Of The probabilities.
-# # ----------------------------------------------------------------------------------------- 
-
-# brier = brier_score_loss(y_test, y_prob)
-
-# print("Brier Score:", brier)
-
-# # If It Close To Zero , We Say It Is Exellent.
-
-
 
 #-----------------------------------Final Comparsion Between Models-------------------------------#
-
 
 models = {
     "Logistic Regression": lr_model,
@@ -1259,9 +1118,3 @@ sns.barplot(
 
 plt.title("Model Comparison (F1 Score)")
 plt.show()
-
-
-
-
-
-

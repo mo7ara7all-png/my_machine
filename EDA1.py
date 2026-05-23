@@ -11,62 +11,42 @@ from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
-
-
-# %% Load dataset
-df = pd.read_csv("OnlineNewsPopularity/OnlineNewsPopularity.csv")
+# Load dataset
+df = pd.read_csv("Data/OnlineNewsPopularity.csv")
 df.columns = df.columns.str.strip()
 
-
-
-# %% preview rows, dimensions, column names
+# preview rows, dimensions, column names
 print(df.head())
 
-#%%
 print(df.shape)
 
-#%%
 print(df.columns)
 
-
-
-# %% Data types and missing values information
+# Data types and missing values information
 print(df.info())
-
-
-
-# %% describe the data, max,mean,min,std..
+ 
+# describe the data, max,mean,min,std..
 print(df.describe())
 
-
-
-# %% Check missing values
+# Check missing values
 print(df.isnull().sum())
 
-
-
-# %% Check duplicates
+# Check duplicates
 print(df.duplicated().sum())
 
-
-
-# %% Data types
+# Data types
 print(df.dtypes)
 
-
-
-# %% Displays the memory usage of each column
+# Displays the memory usage of each column
 print(df.memory_usage(deep=True))
 
-
-
-# %% Display the distribution of values for numerical features
+# Display the distribution of values for numerical features
 df.hist(figsize=(20,15))
 plt.show()
 plt.close()
 
 
-#%% Correlation matrix
+# Correlation matrix
 corr_matrix = df.corr(numeric_only=True)
 
 plt.figure(figsize=(18,12))
@@ -74,33 +54,27 @@ sns.heatmap(corr_matrix, cmap="coolwarm")
 plt.show()
 plt.close()
 
-
-#%% Shares distribution
+# Shares distribution
 sns.histplot(df['shares'], bins=50)
 plt.show()
 plt.close()
 
-
-
-# %% Boxplot for shares
+# Boxplot for shares
 sns.boxplot(x=df["shares"])
 plt.show()
 plt.close()
 
-
-# %% Relationship between content length and shares
+# Relationship between content length and shares
 sns.scatterplot(x='n_tokens_content', y='shares', data=df)
 plt.show()
 plt.close()
 
-
-# %% Shares distribution
+# Shares distribution
 sns.kdeplot(df['shares'], fill=True)
 plt.show()
 plt.close()
 
-
-# %% Log transformation of shares
+# Log transformation of shares
 df['log_shares'] = np.log1p(df['shares'])
 
 plt.figure(figsize=(10,6))
@@ -125,14 +99,11 @@ plt.show()
 plt.close()
 
 
-# %% Finds all topic/category columns
-
+# Finds all topic/category columns
 topic_cols=[col for col in df.columns if 'data_channel_is' in col]
 
 
-
-
-# %% Calculates average shares for each topic
+# Calculates average shares for each topic
 topic_avg = {}
 
 for col in topic_cols:
@@ -149,8 +120,7 @@ plt.ylabel("Average Shares")
 plt.show()
 plt.close()
 
-
-#%% Calculates average shares for each publishing day
+# Calculates average shares for each publishing day
 day_avg = {}
 
 day_cols = [col for col in df.columns if 'weekday_is' in col] # Finds all weekday columns
@@ -169,8 +139,7 @@ plt.ylabel("Average Shares")
 plt.show()
 plt.close()
 
-
-# %% Shows the relationship between sentiment polarity and shares
+# Shows the relationship between sentiment polarity and shares
 sns.scatterplot(x='global_sentiment_polarity', y='shares', data=df)
 plt.title("Global Sentiment Polarity vs Shares")
 plt.xlabel("Global Sentiment Polarity")
@@ -178,21 +147,15 @@ plt.ylabel("Shares")
 plt.show()
 plt.close()
 
-
-
-# %% Make a copy of the original dataset before cleaning
+# Make a copy of the original dataset before cleaning
 df_clean = df.copy()
 print(df_clean.head())
 
-
-
-#%% Check missing values count
+# Check missing values count
 missing_count = df_clean.isnull().sum()
 print(missing_count)
 
-
-
-# %% Check missing values percentage
+# Check missing values percentage
 missing_percentage = (df_clean.isnull().sum() / len(df_clean)) * 100
 
 missing_summary = pd.DataFrame({
@@ -204,9 +167,7 @@ print("Missing Values Summary:")
 print(missing_summary[missing_summary['Missing Count'] > 0])
 
 
-
-
-# %% Visualize missing values
+# Visualize missing values
 plt.figure(figsize=(12,6))
 sns.heatmap(df_clean.isnull(), cbar=False)
 plt.title("Missing Values Heatmap")
@@ -214,43 +175,30 @@ plt.show()
 plt.close()
 
 
-
-# %%# Check if there are any missing values
+# Check if there are any missing values
 total_missing = df_clean.isnull().sum().sum()
 print("Total missing values:", total_missing)
 
-
-
-
-#%% Count duplicate rows
+# Count duplicate rows
 duplicates_count = df_clean.duplicated().sum()
 
 print("Duplicate rows:", duplicates_count)
 
-
-
-# %%# Remove duplicates if found
+# Remove duplicates if found
 if duplicates_count > 0:
     df_clean = df_clean.drop_duplicates()
     print("Duplicates removed.")
 else:
     print("No duplicate rows found.")
 
-
-
-
-# %% Verify shape after cleaning
+# Verify shape after cleaning
 print("Original shape:", df.shape)
 print("Cleaned shape:", df_clean.shape)
 
-
-
-
-#%% Target column
+# Target column
 target_col = "shares"
 
-
-#%% Calculate IQR bounds
+# Calculate IQR bounds
 Q1 = df_clean[target_col].quantile(0.25)
 Q3 = df_clean[target_col].quantile(0.75)
 IQR = Q3 - Q1
@@ -402,30 +350,6 @@ plt.ylabel("R²")
 plt.xticks(rotation=20)
 plt.show()
 plt.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # %% Regression Task
@@ -641,7 +565,7 @@ plt.close()
 
 
 
-#%% The Breusch-Pagan test checks whether the variance of the errors is constant or not
+# The Breusch-Pagan test checks whether the variance of the errors is constant or not
 x_test_const = sm.add_constant(x_test_scaled)
 
 bp_test = het_breuschpagan(residuals, x_test_const)
@@ -660,11 +584,8 @@ print(bp_results)
 
 
 
-#%% If the p-value is less than 0.05, this indicates the presence of heteroscedasticity
+# If the p-value is less than 0.05, this indicates the presence of heteroscedasticity
 if bp_results["p-value"] < 0.05:
     print("Heteroscedasticity detected.")
 else:
     print("No strong heteroscedasticity.")
-
-
-
