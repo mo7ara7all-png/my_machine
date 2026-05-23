@@ -474,6 +474,7 @@ x_test_scaled=scaler.transform(x_test)
 
 
 
+
 # %% Function to evaluate regression models
 def adjusted_r2_score(r2, n, p):
     return 1 - (1 - r2) * (n - 1) / (n - p - 1)
@@ -496,6 +497,8 @@ def evaluate_regression_model(model_name, y_test, y_pred, X_test):
         "R2": r2,
         "Adjusted R2": adj_r2
     }
+
+
 
 
 # %% Define regression models
@@ -654,6 +657,7 @@ bp_results = dict(zip(bp_labels, bp_test))
 
 print("Breusch-Pagan Test Results:")
 print(bp_results)
+
 
 
 #%% If the p-value is less than 0.05, this indicates the presence of heteroscedasticity
