@@ -301,6 +301,9 @@ print("Original shape:", df_clean.shape)
 print("After removing outliers:", df_removed.shape)
 
 
+
+
+
 # %%  Winsorization
 
 df_winsorized = df_clean.copy()
@@ -311,6 +314,9 @@ df_winsorized[target_col] = df_winsorized[target_col].clip(
 )
 
 print("Winsorization completed.")
+
+
+
 
 
 # %% Compare distributions after treatment
@@ -391,6 +397,8 @@ outlier_results_df = pd.DataFrame(outlier_results)
 print(outlier_results_df)
 
 
+
+
 # %% Visualize performance comparison
 
 plt.figure(figsize=(8, 5))
@@ -411,7 +419,7 @@ plt.xticks(rotation=20)
 plt.show()
 plt.close()
 
-
+#1
 
 
 
