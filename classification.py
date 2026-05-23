@@ -195,6 +195,40 @@ plt.tight_layout()
 plt.show()
 
 
+
+
+
+# CALIBRATION CURVE + BRIER SCORE FOR LOGISTIC REGRESSION
+
+lr_prob = lr_model.predict_proba(X_test)[:,1]
+
+prob_true, prob_pred = calibration_curve(
+    y_test,
+    lr_prob,
+    n_bins=10
+)
+
+plt.figure(figsize=(6,6))
+
+plt.plot(prob_pred, prob_true)
+
+plt.plot([0,1], [0,1], linestyle='--')
+
+plt.xlabel("Predicted Probability")
+
+plt.ylabel("True Probability")
+
+plt.title("Logistic Regression Calibration Curve")
+
+plt.show()
+
+brier = brier_score_loss(y_test, lr_prob)
+
+print("Logistic Regression Brier Score:", brier)
+
+
+
+
 print("=" * 50)
 print("KNN Classifier")
 print("=" * 50)
@@ -280,6 +314,39 @@ plt.title(f"KNN ROC Curve (AUC = {auc_score:.2f})")
 plt.show()
 
 print("KNN AUC:", auc_score)
+
+
+
+
+# CALIBRATION CURVE + BRIER SCORE FOR KNN
+
+knn_prob = knn_model.predict_proba(X_test)[:,1]
+
+prob_true, prob_pred = calibration_curve(
+    y_test,
+    knn_prob,
+    n_bins=10
+)
+
+plt.figure(figsize=(6,6))
+
+plt.plot(prob_pred, prob_true)
+
+plt.plot([0,1], [0,1], linestyle='--')
+
+plt.xlabel("Predicted Probability")
+
+plt.ylabel("True Probability")
+
+plt.title("KNN Calibration Curve")
+
+plt.show()
+
+brier = brier_score_loss(y_test, knn_prob)
+
+print("KNN Brier Score:", brier)
+
+
 
 
 
@@ -469,6 +536,36 @@ print("Kernel SVM AUC:", auc_score)
 
 
 
+# CALIBRATION CURVE + BRIER SCORE FOR KERNEL SVM
+
+svm_rbf_prob = svm_rbf.predict_proba(X_test)[:,1]
+
+prob_true, prob_pred = calibration_curve(
+    y_test,
+    svm_rbf_prob,
+    n_bins=10
+)
+
+plt.figure(figsize=(6,6))
+
+plt.plot(prob_pred, prob_true)
+
+plt.plot([0,1], [0,1], linestyle='--')
+
+plt.xlabel("Predicted Probability")
+
+plt.ylabel("True Probability")
+
+plt.title("Kernel SVM Calibration Curve")
+
+plt.show()
+
+brier = brier_score_loss(y_test, svm_rbf_prob)
+
+print("Kernel SVM Brier Score:", brier)
+
+
+
 print("=" * 50)
 print("Decision Tree")
 print("=" * 50)
@@ -581,6 +678,37 @@ sns.barplot(x='Importance', y='Feature', data=tree_importance_df.head(10))
 plt.title("Top 10 Important Features - Decision Tree")
 plt.tight_layout()
 plt.show()
+
+
+
+# CALIBRATION CURVE + BRIER SCORE FOR DECISION TREE
+
+tree_prob = tree_model.predict_proba(X_test)[:,1]
+
+prob_true, prob_pred = calibration_curve(
+    y_test,
+    tree_prob,
+    n_bins=10
+)
+
+plt.figure(figsize=(6,6))
+
+plt.plot(prob_pred, prob_true)
+
+plt.plot([0,1], [0,1], linestyle='--')
+
+plt.xlabel("Predicted Probability")
+
+plt.ylabel("True Probability")
+
+plt.title("Decision Tree Calibration Curve")
+
+plt.show()
+
+brier = brier_score_loss(y_test, tree_prob)
+
+print("Decision Tree Brier Score:", brier)
+
 
 
 
@@ -701,6 +829,38 @@ plt.show()
 
 
 
+
+# CALIBRATION CURVE + BRIER SCORE FOR RANDOM FOREST
+
+rf_prob = rf_model.predict_proba(X_test)[:,1]
+
+prob_true, prob_pred = calibration_curve(
+    y_test,
+    rf_prob,
+    n_bins=10
+)
+
+plt.figure(figsize=(6,6))
+
+plt.plot(prob_pred, prob_true)
+
+plt.plot([0,1], [0,1], linestyle='--')
+
+plt.xlabel("Predicted Probability")
+
+plt.ylabel("True Probability")
+
+plt.title("Random Forest Calibration Curve")
+
+plt.show()
+
+brier = brier_score_loss(y_test, rf_prob)
+
+print("Random Forest Brier Score:", brier)
+
+
+
+
 print("=" * 50)
 print("XGBOOST CLASSIFIER")
 print("=" * 50)
@@ -818,6 +978,37 @@ plt.show()
 
 
 
+# CALIBRATION CURVE + BRIER SCORE FOR XGBOOST
+
+xgb_prob = xgb_model.predict_proba(X_test)[:,1]
+
+prob_true, prob_pred = calibration_curve(
+    y_test,
+    xgb_prob,
+    n_bins=10
+)
+
+plt.figure(figsize=(6,6))
+
+plt.plot(prob_pred, prob_true)
+
+plt.plot([0,1], [0,1], linestyle='--')
+
+plt.xlabel("Predicted Probability")
+
+plt.ylabel("True Probability")
+
+plt.title("XGBoost Calibration Curve")
+
+plt.show()
+
+brier = brier_score_loss(y_test, xgb_prob)
+
+print("XGBoost Brier Score:", brier)
+
+
+
+
 
 print("=" * 50)
 print("LIGHTGBM CLASSIFIER")
@@ -931,6 +1122,37 @@ sns.barplot(x='Importance', y='Feature', data=lgb_importance_df.head(10))
 plt.title("Top 10 Important Features - LightGBM")
 plt.tight_layout()
 plt.show()
+
+
+
+
+# CALIBRATION CURVE + BRIER SCORE FOR LIGHTGBM
+
+lgb_prob = lgb_model.predict_proba(X_test)[:,1]
+
+prob_true, prob_pred = calibration_curve(
+    y_test,
+    lgb_prob,
+    n_bins=10
+)
+
+plt.figure(figsize=(6,6))
+
+plt.plot(prob_pred, prob_true)
+
+plt.plot([0,1], [0,1], linestyle='--')
+
+plt.xlabel("Predicted Probability")
+
+plt.ylabel("True Probability")
+
+plt.title("LightGBM Calibration Curve")
+
+plt.show()
+
+brier = brier_score_loss(y_test, lgb_prob)
+
+print("LightGBM Brier Score:", brier)
 
 
 # ROC Curve + AUC :
