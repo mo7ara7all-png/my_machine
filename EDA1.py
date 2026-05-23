@@ -519,22 +519,26 @@ models = {
 
 
 # %% Train, predict, and evaluate all regression models
-results =[]
-predictions ={}
+results = []
+predictions = {}
 
 for model_name, model in models.items():
     print("Training:", model_name)
-    model.fit(x_train_scaled,y_train)
-y_pred =model.predict(x_test_scaled)
-predictions[model_name]=y_pred
 
-result=evaluate_regression_model(
-    model_name,
-    y_test,
-    y_pred,
-    x_test
-)
-results.append(result)
+    model.fit(x_train_scaled, y_train)
+
+    y_pred = model.predict(x_test_scaled)
+
+    predictions[model_name] = y_pred
+
+    result = evaluate_regression_model(
+        model_name,
+        y_test,
+        y_pred,
+        x_test
+    )
+
+    results.append(result)
 
 
 
@@ -657,19 +661,6 @@ if bp_results["p-value"] < 0.05:
     print("Heteroscedasticity detected.")
 else:
     print("No strong heteroscedasticity.")
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
