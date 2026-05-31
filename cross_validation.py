@@ -12,43 +12,32 @@ from sklearn.model_selection import (
     cross_val_score,
     KFold
 )
-
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from xgboost import XGBRegressor
 
-
-
-
-# %% Load dataset
+# Load dataset
 df = pd.read_csv("OnlineNewsPopularity/OnlineNewsPopularity.csv")
 df.columns = df.columns.str.strip()
 
 
-
-# %% Prepare target variable
+# Prepare target variable
 df["log_shares"] = np.log1p(df["shares"])
 
 y = df["log_shares"]
 
 
-
-
-# %% Prepare features
+# Prepare features
 x=df.drop(
     columns=["url", "shares", "log_shares"],
     errors="ignore"
 )
 
-
-
-
-
 #----------------------------------------------------------------------
 #The test set is kept untouched until the final hold-out evaluation.
 #-----------------------------------------------------------------------
-# %% Train-test split
+# Train-test split
 
 x_train,x_test,y_train,y_test=train_test_split(
     x,
@@ -57,18 +46,10 @@ x_train,x_test,y_train,y_test=train_test_split(
     random_state=42
 )
 
-
-
-# %% Feature scaling
+# Feature scaling
 scaler= StandardScaler()
 x_train_scaled=scaler.fit_transform(x_train)
 x_test_scaled=scaler.transform(x_test)
-
-
-
-
-
-
 
 
 #-------------------------------------------------------------------
@@ -77,7 +58,7 @@ x_test_scaled=scaler.transform(x_test)
 # Instead, 5-fold cross-validation with
 # a separate hold-out test set was used.
 #------------------------------------------------------------------------
-# %% Cross-validation setup
+# Cross-validation setup
 
 cv=KFold(
     n_splits=5,
@@ -86,16 +67,13 @@ cv=KFold(
 )
 
 
-
-# %% Baseline XGBoost model
+# Baseline XGBoost model
 baseline_model= XGBRegressor(
     random_state=42,
     objective="reg:squarederror"
 )
 
-
-
-# %% Baseline cross-validation
+# Baseline cross-validation
 baseline_cv_scores=cross_val_score(
     baseline_model,
     x_train_scaled,
@@ -104,14 +82,8 @@ baseline_cv_scores=cross_val_score(
     scoring="neg_root_mean_squared_error"
 )
 
-
 baseline_cv_rmse= -baseline_cv_scores.mean()
 print("Baseline CV RMSE:",baseline_cv_rmse)
-
-
-
-
-
 
 
 #-------------------------------------------------
@@ -128,9 +100,7 @@ print("GridSearchCV Parameter Grid:")
 print(param_grid)
 
 
-
-
-# %% GridSearchCV
+# GridSearchCV
 start_time= time.time()
 grid_search=GridSearchCV(
 estimator=XGBRegressor(
@@ -143,8 +113,6 @@ cv=cv,
 scoring="neg_root_mean_squared_error",
 n_jobs= -1
 )
-
-
 
 grid_search.fit(x_train_scaled,y_train)
 grid_runtime=time.time() -start_time
@@ -159,20 +127,11 @@ print("Runtime in seconds:",grid_runtime)
 #------------------------------------------------
 
 
-
-
-
-
-
-
-
-
-
 #---------------------------------------------------------
 # RandomizedSearchCV samples random parameter combinations.
 # It is faster than GridSearchCV for larger search spaces.
 #----------------------------------------------------------
-# %% Parameter distribution for RandomizedSearchCV
+# Parameter distribution for RandomizedSearchCV
 param_dist={
     "n_estimators": [100, 200, 300],
     "max_depth": [3, 4, 5, 6],
@@ -184,13 +143,7 @@ print("RandomizedSearchCV Parameter Distribution:")
 print(param_dist)
 
 
-
-
-
-
-
-
-#%% RandomizedSearchCV
+# RandomizedSearchCV
 start_time= time.time()
 
 random_search= RandomizedSearchCV(
@@ -218,14 +171,7 @@ print("Runtime in seconds:",random_runtime)
 # and achieved the best RMSE.
 #-----------------------------------
 
-
-
-
-
-
-
-
-#%% Compare GridSearchCV and RandomizedSearchCV
+# Compare GridSearchCV and RandomizedSearchCV
 tuning_results =pd.DataFrame({
     "Search Method":["GridSearchCV", "RandomizedSearchCV"],
     "Best CV RMSE":[
@@ -240,7 +186,6 @@ tuning_results =pd.DataFrame({
 
 print("------ Tuning Comparison ------")
 print(tuning_results)
-
 
 plt.figure(figsize=(8,5))
 
@@ -257,8 +202,6 @@ plt.show()
 plt.close()
 
 
-
-
 plt.figure(figsize=(8,5))
 
 sns.barplot(
@@ -273,17 +216,10 @@ plt.ylabel("Runtime in Seconds")
 plt.show()
 plt.close()
 
-
-
-
-
-
-
-
 #----------------------------------------------------------------------
 # The best model is selected based on the lowest cross-validation RMSE.
 #-----------------------------------------------------------------------
-#%% Select the best tuned model
+# Select the best tuned model
 
 if -grid_search.best_score_ <= -random_search.best_score_:
     best_model = grid_search.best_estimator_
@@ -293,15 +229,6 @@ else:
     best_method= "RandomizedSearchCV"
 
 print("Best Search Method:", best_method)
-
-
-
-
-
-
-
-
-
 
 #-----------------------------------------------------------
 # The final model is evaluated on the test set only once.
@@ -318,7 +245,6 @@ final_rmse = np.sqrt(final_mse)
 
 final_r2= r2_score(y_test,final_pred)
 
-
 print("------ Final Hold-Out Evaluation ------")
 print("MAE:", final_mae)
 print("MSE:", final_mse)
@@ -326,11 +252,7 @@ print("RMSE:", final_rmse)
 print("R2:", final_r2)
 
 
-
-
-
-
-#%% Final comparison table
+# Final comparison table
 final_results = pd.DataFrame({
  "Metric": ["MAE", "MSE", "RMSE", "R2"],
  "Final Test Score":[
@@ -344,10 +266,7 @@ final_results = pd.DataFrame({
 print("Final Hold-Out Results:")
 print(final_results)
 
-
-
-
-# %% Actual vs Predicted plot
+# Actual vs Predicted plot
 plt.figure(figsize=(8,5))
 
 sns.scatterplot(
@@ -359,10 +278,8 @@ plt.xlabel("Actual Log Shares")
 plt.ylabel("Predicted Log Shares")
 plt.title(f"Actual vs Predicted - Tuned XGBoost ({best_method})")
 
-
 plt.show()
 plt.close()
-
 
 #-----------------------------------------------------
 # Hyperparameter tuning improved model performance
