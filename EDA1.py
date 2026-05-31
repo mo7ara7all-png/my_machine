@@ -14,7 +14,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 
 # %% Load dataset
-df = pd.read_csv("OnlineNewsPopularity/OnlineNewsPopularity.csv")
+df = pd.read_csv("Data/OnlineNewsPopularity.csv")
 df.columns = df.columns.str.strip()
 
 
@@ -397,8 +397,6 @@ outlier_results_df = pd.DataFrame(outlier_results)
 print(outlier_results_df)
 
 
-
-
 # %% Visualize performance comparison
 
 plt.figure(figsize=(8, 5))
@@ -443,5 +441,242 @@ plt.close()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# %% --------------------Robustness----------------------------
+
+
+
+# %%
+df_robust=df_clean.copy()
+
+#  Converting shares to log_shares to reduce skewness
+df_robust["log_shares"] = np.log1p(df_robust["shares"])
+
+
+y=df_robust["log_shares"]
+
+x=df_robust.drop(columns=["url", "shares", "log_shares"], errors="ignore")
+
+
+
+
+# %% Split data into training and testing sets 
+x_train, x_test, y_train, y_test = train_test_split(
+    x,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+
+
+# %% Create scaler
+scaler=StandardScaler()
+
+x_train_scaled=scaler.fit_transform(x_train)
+
+x_test_scaled=scaler.transform(x_test)
+
+
+
+
+# %% Train baseline model without noise
+baseline_model = Ridge(alpha=1.0)
+
+baseline_model.fit(x_train_scaled,y_train)
+baseline_pred=baseline_model.predict(x_test_scaled)
+
+
+
+# %% Calculate baseline performance
+baseline_rmse = np.sqrt(
+    mean_squared_error(y_test, baseline_pred)
+)
+
+baseline_r2=r2_score(y_test,baseline_pred)
+
+
+print("Baseline RMSE:",  baseline_rmse)
+print("Baseline R2:",  baseline_r2)
+
+
+
+# %% ---Add Gaussian noise to training data
+noise_factor = 0.1
+noise =noise_factor *np.random.normal(
+    loc= 0,
+    scale= 1,
+    size=x_train_scaled.shape
+
+)
+x_train_noisy=x_train_scaled + noise
+
+
+
+
+# %% Train model on noisy data
+noisy_model =Ridge(alpha=1.0)
+noisy_model.fit(x_train_noisy,y_train)
+noisy_pred=noisy_model.predict(x_test_scaled)
+
+
+
+
+# %% Evaluate performance after noise injection
+noisy_rmse= np.sqrt(
+    mean_squared_error(y_test, noisy_pred)
+)
+noisy_r2=r2_score(y_test,noisy_pred)
+
+print("Noisy RMSE:", noisy_rmse)
+
+print("Noisy R2:", noisy_r2)
+
+
+
+#After adding noise to the training data,
+#the model performance changed only a little.
+#RMSE increased slightly and R² decreased slightly.
+#This means the model is relatively robust
+#and can handle small changes in the data.
+#--------------------------------------------------------
+
+
+
+#%% # %% Add Gaussian noise to training data
+noise_factor =0.2
+noise =noise_factor * np.random.normal(
+    loc=0,
+    scale=1,
+    size=x_train_scaled.shape
+)
+
+x_train_noisy=x_train_scaled + noise
+
+
+
+# %% Train model on noisy data
+noisy_model = Ridge(alpha=1.0)
+
+noisy_model.fit(x_train_noisy,y_train)
+noisy_pred=noisy_model.predict(x_test_scaled)
+
+
+
+
+# %% Evaluate performance after noise injection
+noisy_rmse=np.sqrt(
+    mean_squared_error(y_test, noisy_pred)
+)
+noisy_r2=r2_score(y_test,noisy_pred)
+
+
+print("Noisy RMSE:",noisy_rmse)
+print("Noisy R2:", noisy_r2)
+
+
+
+
+# %% Compare robustness results
+#---- Create a comparison table   
+robustness_results = pd.DataFrame({
+    "Scenario": ["Baseline", "With Noise"],
+    "RMSE": [baseline_rmse, noisy_rmse],
+    "R2": [baseline_r2, noisy_r2]
+})
+
+print(robustness_results)
+
+
+
+
+# %% Visualize RMSE comparison
+plt.figure(figsize=(9,6))
+
+sns.barplot(
+    data=robustness_results,
+    x="Scenario",
+    y="RMSE"
+)
+plt.title("Robustness Test -- RMSE Comparison")
+plt.ylabel("RMSE")
+plt.show()
+plt.close()
+
+
+
+# %% Visualize R2 comparison
+plt.figure(figsize=(9,6))
+sns.barplot(
+    data=robustness_results,
+    x="Scenario",
+    y="R2"
+)
+plt.title("Robustness Test -- R2 Comparison")
+plt.ylabel("R2")
+plt.show()
+plt.close()
 
 
