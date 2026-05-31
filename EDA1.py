@@ -250,6 +250,8 @@ print("Cleaned shape:", df_clean.shape)
 target_col = "shares"
 
 
+
+
 #%% Calculate IQR bounds
 Q1 = df_clean[target_col].quantile(0.25)
 Q3 = df_clean[target_col].quantile(0.75)
@@ -262,6 +264,8 @@ print("Lower bound:", lower_bound)
 print("Upper bound:", upper_bound)
 
 
+
+
 #%% Detect outliers
 outliers = df_clean[
     (df_clean[target_col] < lower_bound) |
@@ -272,6 +276,8 @@ print("Number of outliers:", outliers.shape[0])
 print("Percentage of outliers:", round(outliers.shape[0] / len(df_clean) * 100, 2), "%")
 
 
+
+
 # %% Visualize outliers before treatment
 
 plt.figure(figsize=(10, 4))
@@ -280,6 +286,8 @@ plt.title("Shares Outliers Before Treatment")
 plt.xlabel("Shares")
 plt.show()
 plt.close()
+
+
 
 
 # %%  Remove outliers
@@ -293,6 +301,9 @@ print("Original shape:", df_clean.shape)
 print("After removing outliers:", df_removed.shape)
 
 
+
+
+
 # %%  Winsorization
 
 df_winsorized = df_clean.copy()
@@ -303,6 +314,9 @@ df_winsorized[target_col] = df_winsorized[target_col].clip(
 )
 
 print("Winsorization completed.")
+
+
+
 
 
 # %% Compare distributions after treatment

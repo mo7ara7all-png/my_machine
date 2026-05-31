@@ -66,7 +66,7 @@ models = {
     #     probability=True,
     #     random_state=42
     # ),
-
+    #-------------------------------> (very very slow)
     # "SVM RBF": SVC(
     #     kernel='rbf',
     #     probability=True,
@@ -94,9 +94,9 @@ models = {
     )
 }
 
-# =====================================================
-# 1. VALIDATION VS TRAINING PERFORMANCE
-# =====================================================
+# # =====================================================
+# # 1. VALIDATION VS TRAINING PERFORMANCE
+# # =====================================================
 
 print("\n================ VALIDATION VS TRAINING PERFORMANCE ================\n")
 
@@ -410,7 +410,7 @@ t_stat, p_value = ttest_rel(best_scores, second_scores)
 
 print("\nPaired t-test result:")
 print("t-statistic:", t_stat)
-print("p-value:", p_value)
+print("p-value:", p_value)     #---------> if p-value < 0.05 --> Statistically Significant
 
 
 # Wilcoxon signed-rank test
@@ -420,34 +420,3 @@ print("\nWilcoxon signed-rank test result:")
 print("statistic:", wilcoxon_stat)
 print("p-value:", wilcoxon_p_value)
 
-# =====================================================
-# INTERPRET STATISTICAL TEST
-# =====================================================
-
-alpha = 0.05
-
-print("\n================ STATISTICAL TEST INTERPRETATION ================\n")
-
-if p_value < alpha:
-    print("Paired t-test: The difference between the two models is statistically significant.")
-else:
-    print("Paired t-test: The difference between the two models is NOT statistically significant.")
-
-if wilcoxon_p_value < alpha:
-    print("Wilcoxon test: The difference between the two models is statistically significant.")
-else:
-    print("Wilcoxon test: The difference between the two models is NOT statistically significant.")
-
-# =====================================================
-# FINAL MODEL SELECTION
-# =====================================================
-
-print("\n================ FINAL MODEL SELECTION ================\n")
-
-print("Recommended Model Based on Cross-Validation F1:", best_model_name)
-
-print("\nReason:")
-print("- It achieved the highest mean F1 score during cross-validation.")
-print("- The train-test gap was checked to detect overfitting.")
-print("- Learning curves were used to study whether the model improves with more data.")
-print("- Statistical tests were used to check whether the difference from the second-best model is meaningful.")
