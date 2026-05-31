@@ -10,22 +10,14 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error, r2_score
 
-
-
-
-
-# %% Load dataset
+# Load dataset
 df_clean = pd.read_csv("Data/OnlineNewsPopularity.csv")
 df_clean.columns = df_clean.columns.str.strip()
 
-
-
-
-# %% Prepare data for robustness testing
+# Prepare data for robustness testing
 df_robust =df_clean.copy()
 
-
-# %% Convert shares to log_shares to reduce skewness
+# Convert shares to log_shares to reduce skewness
 df_robust["log_shares"]= np.log1p(df_robust["shares"])
 y=df_robust["log_shares"]
 
@@ -34,9 +26,7 @@ x=df_robust.drop(
     errors="ignore"
     )
 
-
-
-# %% Split data into training and testing sets
+# Split data into training and testing sets
 
 x_train,x_test,y_train,y_test=train_test_split(
 x,
@@ -45,17 +35,13 @@ test_size=0.2,
 random_state=42
 )
 
-
-
-# %% Scale features before training the model
+# Scale features before training the model
 
 scaler= StandardScaler()
 x_train_scaled=scaler.fit_transform(x_train)
 x_test_scaled=scaler.transform(x_test)
 
-
-
-# %% Function to train and evaluate the model
+# Function to train and evaluate the model
 def evaluate_model(x_train_data,y_train_data,x_test_data,y_test_data):
 
 
@@ -76,8 +62,7 @@ def evaluate_model(x_train_data,y_train_data,x_test_data,y_test_data):
     r2=r2_score(y_test_data,y_pred)
     return rmse,r2
 
-
-# %% Train the baseline model without any changes
+# Train the baseline model without any changes
 
 baseline_rmse, baseline_r2 =evaluate_model(
     x_train_scaled,
@@ -85,13 +70,10 @@ baseline_rmse, baseline_r2 =evaluate_model(
     x_test_scaled,
     y_test
 )
-
 print("Baseline RMSE:" , baseline_rmse)
 print("Baseline R2:", baseline_r2)
 
-
-
-# %% Add Gaussian noise to test model stability
+# Add Gaussian noise to test model stability
 
 noise_levels={
     "Low Noise": 0.05,
@@ -105,9 +87,8 @@ noise_results.append({
     "Scenario": "Baseline",
     "RMSE":baseline_rmse,
     "R2":baseline_r2
-    
+  
 })
-
 
 for scenario, noise_factor in noise_levels.items():
       noise=noise_factor * np.random.normal(
@@ -134,14 +115,7 @@ for scenario, noise_factor in noise_levels.items():
       print("Noise Injection Results:")
       print(noise_results_df)
 
-
-
-
-
-
-
-
-# %% Compare performance after adding noise
+# Compare performance after adding noise
 
 plt.figure(figsize=(10,7))
 sns.barplot(
@@ -172,10 +146,7 @@ plt.close()
 #-----------------------------------------------------
 
 
-
-
-
-# %% Remove important features and evaluate performance
+# Remove important features and evaluate performance
 correlations =df_robust.drop(
     columns=["url"],
     errors="ignore"
@@ -228,14 +199,7 @@ print(feature_removal_results_df)
 #----------------------------------------------------------------------
 
 
-
-
-
-
-
-
-
-# %% Compare performance after removing important features
+# Compare performance after removing important features
 plt.figure(figsize=(10,7))
 
 sns.barplot(
@@ -262,12 +226,7 @@ plt.title("Feature Removal - R²")
 plt.show()
 plt.close()
 
-
-
-
-
-
-# %% Train the model using smaller amounts of data
+# Train the model using smaller amounts of data
 
 traning_sizes = {
     "10%" : 0.10,
@@ -315,10 +274,7 @@ for scenario, fraction in traning_sizes.items():
 #-------------------------------------------------------------------------
 
 
-
-
-
-# %% Compare performance using different training sizes
+# Compare performance using different training sizes
 
 plt.figure(figsize=(10,7))
 sns.barplot(
@@ -332,7 +288,6 @@ plt.title("Reduced Training Data - RMSE")
 
 plt.show()
 plt.close()
-
 
 plt.figure(figsize=(10,7))
 sns.barplot(
@@ -349,11 +304,7 @@ plt.close()
 # The model performed better when more training data was used.
 #---------------------------------------------------------------
 
-
-
-
-
-# %% Add artificial outliers to test model sensitivity
+# Add artificial outliers to test model sensitivity
 
 outlier_levels ={
     "Low Outliers": 0.01,
@@ -406,11 +357,7 @@ for scenario, fraction in outlier_levels.items():
 #------------------------------------------------------
 
 
-
-
-
-
-# %% Compare performance after adding outliers
+# Compare performance after adding outliers
 
 plt.figure(figsize=(10,7))
 sns.barplot(
@@ -441,10 +388,6 @@ plt.close()
 # and reduced model performance.
 #------------------------------------------------------------
 
-
-
-
-
 #-------------------------------------------------------
 # Robustness testing was performed using:
 # 1. Noise Injection
@@ -452,4 +395,3 @@ plt.close()
 # 3. Reduced Training Data
 # 4. Outlier Sensitivity
 #--------------------------------------------------------
-
