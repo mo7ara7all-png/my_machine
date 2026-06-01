@@ -8,7 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
 # Read The Data :
-df = pd.read_csv("OnlineNewsPopularity.csv")
+df = pd.read_csv("data//OnlineNewsPopularity.csv")
 
 # Clean Column Names :
 # ----------------------------------------------------------------------------------------- 

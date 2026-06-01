@@ -13,9 +13,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
-df = pd.read_csv("OnlineNewsPopularity.csv")
+df = pd.read_csv("Data//OnlineNewsPopularity.csv")
 
+df.columns = df.columns.str.strip()
+df.drop(columns=['url'], inplace=True)
 
+median_shares = df['shares'].median()
+df['popular'] = (df['shares'] > median_shares).astype(int)
 
 X = df.drop(columns=['shares', 'popular'])
 y = df['popular']
@@ -28,7 +32,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 #Note:
-# I used Logisitic Regression because he is so sensitive to outliers.
+# I used Logistic Regression because it is sensitive to feature scaling.
 
 #=============STANDARD SCALER===============#
 
