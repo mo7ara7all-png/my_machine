@@ -313,194 +313,194 @@ print("=" * 50)
 # 1)
 # Linear SVM.
 
-svm_linear = SVC(
-    kernel='linear',
-    random_state=42
-)
-svm_linear.fit(X_train, y_train)
+# svm_linear = SVC(
+#     kernel='linear',
+#     random_state=42
+# )
+# svm_linear.fit(X_train, y_train)
 
-svm_pred = svm_linear.predict(X_test)
+# svm_pred = svm_linear.predict(X_test)
 
-print("Accuracy:",
-      accuracy_score(y_test, svm_pred))
+# print("Accuracy:",
+#       accuracy_score(y_test, svm_pred))
 
-print("Precision:",
-      precision_score(y_test, svm_pred))
+# print("Precision:",
+#       precision_score(y_test, svm_pred))
 
-print("Recall:",
-      recall_score(y_test, svm_pred))
+# print("Recall:",
+#       recall_score(y_test, svm_pred))
 
-print("F1 Score:",
-      f1_score(y_test, svm_pred))
-
-
-# Classification Report For SVM(Linear)
-print("\nClassification Report:\n")
-
-print(classification_report(
-    y_test,
-    svm_pred
-))
-
-# Confusion Matrix For SVM(Linear)
-cm = confusion_matrix(y_test, svm_pred)
-
-plt.figure(figsize=(5,5))
-
-sns.heatmap(
-    cm,
-    annot=True,
-    fmt='d'
-)
-
-plt.title("Linear SVM Confusion Matrix")
-
-plt.xlabel("Predicted")
-plt.ylabel("Actual")
-
-plt.show()
+# print("F1 Score:",
+#       f1_score(y_test, svm_pred))
 
 
-# (ROC + AUC) For Linear SVM
-svm_linear_prob = svm_linear.predict_proba(X_test)[:,1]
+# # Classification Report For SVM(Linear)
+# print("\nClassification Report:\n")
 
-fpr, tpr, thresholds = roc_curve(
-    y_test,
-    svm_linear_prob
-)
+# print(classification_report(
+#     y_test,
+#     svm_pred
+# ))
 
-auc_score = roc_auc_score(
-    y_test,
-    svm_linear_prob
-)
+# # Confusion Matrix For SVM(Linear)
+# cm = confusion_matrix(y_test, svm_pred)
 
-plt.figure(figsize=(6,6))
+# plt.figure(figsize=(5,5))
 
-plt.plot(fpr, tpr)
+# sns.heatmap(
+#     cm,
+#     annot=True,
+#     fmt='d'
+# )
 
-plt.plot([0,1], [0,1], linestyle='--')
+# plt.title("Linear SVM Confusion Matrix")
 
-plt.xlabel("False Positive Rate")
+# plt.xlabel("Predicted")
+# plt.ylabel("Actual")
 
-plt.ylabel("True Positive Rate")
-
-plt.title(f"Linear SVM ROC Curve (AUC = {auc_score:.2f})")
-
-plt.show()
-
-print("Linear SVM AUC:", auc_score)
-
-#2)
-# Kernel SVM.
-
-svm_rbf = SVC(
-    kernel='rbf',
-    probability=True,
-    random_state=42
-)
-svm_rbf.fit(X_train, y_train)
-
-svm_rbf_pred = svm_rbf.predict(X_test)
-
-print("Accuracy:",
-      accuracy_score(y_test, svm_rbf_pred))
-
-print("Precision:",
-      precision_score(y_test, svm_rbf_pred))
-
-print("Recall:",
-      recall_score(y_test, svm_rbf_pred))
-
-print("F1 Score:",
-      f1_score(y_test, svm_rbf_pred))
+# plt.show()
 
 
-# Classification Report For SVM(Kernel)
-print("\nClassification Report:\n")
+# # (ROC + AUC) For Linear SVM
+# svm_linear_prob = svm_linear.predict_proba(X_test)[:,1]
 
-print(classification_report(
-    y_test,
-    svm_rbf_pred
+# fpr, tpr, thresholds = roc_curve(
+#     y_test,
+#     svm_linear_prob
+# )
+
+# auc_score = roc_auc_score(
+#     y_test,
+#     svm_linear_prob
+# )
+
+# plt.figure(figsize=(6,6))
+
+# plt.plot(fpr, tpr)
+
+# plt.plot([0,1], [0,1], linestyle='--')
+
+# plt.xlabel("False Positive Rate")
+
+# plt.ylabel("True Positive Rate")
+
+# plt.title(f"Linear SVM ROC Curve (AUC = {auc_score:.2f})")
+
+# plt.show()
+
+# print("Linear SVM AUC:", auc_score)
+
+# #2)
+# # Kernel SVM.
+
+# svm_rbf = SVC(
+#     kernel='rbf',
+#     probability=True,
+#     random_state=42
+# )
+# svm_rbf.fit(X_train, y_train)
+
+# svm_rbf_pred = svm_rbf.predict(X_test)
+
+# print("Accuracy:",
+#       accuracy_score(y_test, svm_rbf_pred))
+
+# print("Precision:",
+#       precision_score(y_test, svm_rbf_pred))
+
+# print("Recall:",
+#       recall_score(y_test, svm_rbf_pred))
+
+# print("F1 Score:",
+#       f1_score(y_test, svm_rbf_pred))
+
+
+# # Classification Report For SVM(Kernel)
+# print("\nClassification Report:\n")
+
+# print(classification_report(
+#     y_test,
+#     svm_rbf_pred
     
-    ))
+#     ))
 
 
-# Confusion Matrix For SVM(kernel)
-cm = confusion_matrix(y_test, svm_rbf_pred)
+# # Confusion Matrix For SVM(kernel)
+# cm = confusion_matrix(y_test, svm_rbf_pred)
 
-plt.figure(figsize=(5,5))
+# plt.figure(figsize=(5,5))
 
-sns.heatmap(
-    cm,
-    annot=True,
-    fmt='d'
-)
+# sns.heatmap(
+#     cm,
+#     annot=True,
+#     fmt='d'
+# )
 
-plt.title("Kernel SVM Confusion Matrix")
+# plt.title("Kernel SVM Confusion Matrix")
 
-plt.xlabel("Predicted")
-plt.ylabel("Actual")
+# plt.xlabel("Predicted")
+# plt.ylabel("Actual")
 
-plt.show()
-
-
-# (ROC + AUC) For Kernel SVM
-svm_rbf_prob = svm_rbf.predict_proba(X_test)[:,1]
-
-fpr, tpr, thresholds = roc_curve(
-    y_test,
-    svm_rbf_prob
-)
-
-auc_score = roc_auc_score(
-    y_test,
-    svm_rbf_prob
-)
-
-plt.figure(figsize=(6,6))
-
-plt.plot(fpr, tpr)
-
-plt.plot([0,1], [0,1], linestyle='--')
-
-plt.xlabel("False Positive Rate")
-
-plt.ylabel("True Positive Rate")
-
-plt.title(f"Kernel SVM ROC Curve (AUC = {auc_score:.2f})")
-
-plt.show()
-
-print("Kernel SVM AUC:", auc_score)
+# plt.show()
 
 
-# CALIBRATION CURVE + BRIER SCORE FOR KERNEL SVM
+# # (ROC + AUC) For Kernel SVM
+# svm_rbf_prob = svm_rbf.predict_proba(X_test)[:,1]
 
-svm_rbf_prob = svm_rbf.predict_proba(X_test)[:,1]
+# fpr, tpr, thresholds = roc_curve(
+#     y_test,
+#     svm_rbf_prob
+# )
 
-prob_true, prob_pred = calibration_curve(
-    y_test,
-    svm_rbf_prob,
-    n_bins=10
-)
+# auc_score = roc_auc_score(
+#     y_test,
+#     svm_rbf_prob
+# )
 
-plt.figure(figsize=(6,6))
+# plt.figure(figsize=(6,6))
 
-plt.plot(prob_pred, prob_true)
+# plt.plot(fpr, tpr)
 
-plt.plot([0,1], [0,1], linestyle='--')
+# plt.plot([0,1], [0,1], linestyle='--')
 
-plt.xlabel("Predicted Probability")
+# plt.xlabel("False Positive Rate")
 
-plt.ylabel("True Probability")
+# plt.ylabel("True Positive Rate")
 
-plt.title("Kernel SVM Calibration Curve")
+# plt.title(f"Kernel SVM ROC Curve (AUC = {auc_score:.2f})")
 
-plt.show()
+# plt.show()
 
-brier = brier_score_loss(y_test, svm_rbf_prob)
+# print("Kernel SVM AUC:", auc_score)
 
-print("Kernel SVM Brier Score:", brier)
+
+# # CALIBRATION CURVE + BRIER SCORE FOR KERNEL SVM
+
+# svm_rbf_prob = svm_rbf.predict_proba(X_test)[:,1]
+
+# prob_true, prob_pred = calibration_curve(
+#     y_test,
+#     svm_rbf_prob,
+#     n_bins=10
+# )
+
+# plt.figure(figsize=(6,6))
+
+# plt.plot(prob_pred, prob_true)
+
+# plt.plot([0,1], [0,1], linestyle='--')
+
+# plt.xlabel("Predicted Probability")
+
+# plt.ylabel("True Probability")
+
+# plt.title("Kernel SVM Calibration Curve")
+
+# plt.show()
+
+# brier = brier_score_loss(y_test, svm_rbf_prob)
+
+# print("Kernel SVM Brier Score:", brier)
 
 
 print("=" * 50)
@@ -1070,8 +1070,8 @@ print("LightGBM Brier Score:", brier)
 models = {
     "Logistic Regression": lr_model,
     "KNN": knn_model,
-    "SVM (Linear)": svm_linear,
-    "SVM (RBF)": svm_rbf,
+    # "SVM (Linear)": svm_linear,
+    # "SVM (RBF)": svm_rbf,
     "Decision Tree": tree_model,
     "Random Forest": rf_model,
     "XGBoost": xgb_model
